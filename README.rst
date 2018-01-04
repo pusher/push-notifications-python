@@ -4,10 +4,10 @@ Pusher Push Notifications Python server SDK
 Installation
 ------------
 The Pusher Notifications Python server SDK is available on PyPi
-`here <http://www.python.org/>`_.
+`here <https://pypi.python.org/pypi/pusher_push_notifications/>`_.
 
 You can install this SDK by using
-`pip <https://pip.pypa.io/en/stable/installing/`_:
+`pip <https://pip.pypa.io/en/stable/installing/>`_:
 
 .. code:: bash
 
@@ -24,7 +24,7 @@ Use your instance id and secret (you can get these from the
 
 .. code:: python
 
-  import PushNotifications from pusher_push_notifications
+  from pusher_push_notifications import PushNotifications
 
   pn_client = PushNotifications(
       instance_id='YOUR_INSTANCE_ID_HERE',
@@ -35,6 +35,7 @@ Publishing a Notification
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Once you have created your PushNotifications instance you can publish a push notification to your registered & subscribed devices:
+
 .. code:: python
 
   response = pn_client.publish({'interests': ['hello'], 'apns': {'aps': {'alert': 'Hello!'}}})
