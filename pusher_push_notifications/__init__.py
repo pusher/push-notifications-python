@@ -1,6 +1,9 @@
 """Pusher Push Notifications Python server SDK"""
 
+import requests
 import six
+
+SDK_VERSION = '0.9.0'
 
 
 class PushNotifications(object):
@@ -28,3 +31,18 @@ class PushNotifications(object):
             self.instance_id,
         )
         return self._endpoint or default_endpoint
+
+    def publish(self, publish_body):
+        requests.post(
+            'https://{}/publish_api/v1/instances/{}/publishes'.format(
+                self.endpoint,
+                self.instance_id,
+            ),
+            json=publish_body,
+            headers={
+                'authorization': 'Bearer {}'.format(self.secret_key),
+                'x-pusher-library': 'pusher-push-notifications-python {}'.format(
+                    SDK_VERSION,
+                )
+            },
+        )
