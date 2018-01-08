@@ -87,8 +87,18 @@ class PushNotifications(object):
             (see https://docs.pusher.com/push-notifications)
 
         Raises:
+            PusherAuthError: if the secret_key is incorrect
+            PusherMissingInstanceError: if the instance_id is incorrect
+            PusherServerError: if the Push Notifications service returns
+                an error
+            PusherValidationError: if the publish_body is invalid
             TypeError: if interests is not a list
             TypeError: if publish_body is not a dict
+            TypeError: if any interest is not a string
+            ValueError: if len(interests) < 1
+            ValueError: if any interest length is greater than the max
+            ValueError: if any interest contains a forbidden character
+
         """
         if not isinstance(interests, list):
             raise TypeError('interests must be a list')
