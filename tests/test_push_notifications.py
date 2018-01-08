@@ -43,7 +43,7 @@ class TestPushNotifications(unittest.TestCase):
         )
         self.assertEqual(
             pn_client.endpoint,
-            'INSTANCE_ID.pushnotifications.pusher.com',
+            'instance_id.pushnotifications.pusher.com',
         )
 
     def test_constructor_should_accept_endpoint_override(self):
@@ -67,14 +67,16 @@ class TestPushNotifications(unittest.TestCase):
                 requests_mock.ANY,
                 requests_mock.ANY,
             )
-            pn_client.publish({
-                'interests': ['donuts'],
-                'apns': {
-                    'aps': {
-                        'alert': 'Hello World!',
+            pn_client.publish(
+                interests=['donuts'],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
+                        },
                     },
                 },
-            })
+            )
             req = http_mock.request_history[0]
 
         method = req.method
@@ -111,3 +113,31 @@ class TestPushNotifications(unittest.TestCase):
                 },
             },
         )
+
+        def test_publish_should_fail_if_interests_not_list(self):
+            pn_client = PushNotifications(
+                'INSTANCE_ID',
+                'SECRET_KEY'
+            )
+            with self.assertRaises(TypeError):
+                pn_client.publish(
+                        interests=False,
+                        publish_body={
+                            'apns': {
+                                'aps': {
+                                    'alert': 'Hello World!',
+                                },
+                            },
+                        },
+                )
+
+        def test_publish_should_fail_if_body_not_dict(self):
+            pn_client = PushNotifications(
+                'INSTANCE_ID',
+                'SECRET_KEY'
+            )
+            with self.assertRaises(TypeError):
+                pn_client.publish(
+                        interests=['donuts'],
+                        publish_body=False,
+                )

@@ -29,20 +29,49 @@ class PushNotifications(object):
         """Property method to calculate the correct Pusher API host"""
         default_endpoint = '{}.pushnotifications.pusher.com'.format(
             self.instance_id,
-        )
+        ).lower()
         return self._endpoint or default_endpoint
 
-    def publish(self, publish_body):
-        requests.post(
+    def publish(self, interests, publish_body):
+        """Publish the given publish_body to the specified interests.
+
+        Args:
+            interests (list): List of interests that the publish body should
+                be sent to.
+            publish_body (dict): Dict containing the body of the push
+            notification publish request.
+            (see https://docs.pusher.com/push-notifications)
+
+        Returns:
+            A dict containing the publish response from the Pusher Push
+            Notifications service.
+            (see https://docs.pusher.com/push-notifications)
+
+        Raises:
+            TypeError: if interests is not a list
+            TypeError: if publish_body is not a dict
+        """
+        if not isinstance(interests, list):
+            raise TypeError('interests must be a list')
+        if not isinstance(publish_body, dict):
+            raise TypeError('publish_body must be a dictionary')
+
+        publish_body['interests'] = interests
+
+        session = requests.Session()
+        request = requests.Request(
+            'POST',
             'https://{}/publish_api/v1/instances/{}/publishes'.format(
                 self.endpoint,
                 self.instance_id,
             ),
             json=publish_body,
             headers={
+                'host': self.endpoint,
                 'authorization': 'Bearer {}'.format(self.secret_key),
                 'x-pusher-library': 'pusher-push-notifications-python {}'.format(
                     SDK_VERSION,
                 )
             },
         )
+        session.send(request.prepare())
