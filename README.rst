@@ -1,5 +1,6 @@
 Pusher Push Notifications Python server SDK
 ===========================================
+Full documentation for this SDK can be found `here <https://docs.pusher.com/push-notifications/reference/server-sdk-python>`_
 
 Installation
 ------------
