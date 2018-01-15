@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/pusher/push-notifications-python.svg?branch=master
+   :target: https://travis-ci.org/pusher/push-notifications-python
+
 Pusher Push Notifications Python server SDK
 ===========================================
 Full documentation for this SDK can be found `here <https://docs.pusher.com/push-notifications/reference/server-sdk-python>`__

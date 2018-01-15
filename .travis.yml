@@ -8,3 +8,4 @@ install:
 script:
   - python -m pylint ./pusher_push_notifications/*.py
   - python -m nose -s
+  - python setup.py checkdocs
