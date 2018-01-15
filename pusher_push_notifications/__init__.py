@@ -156,7 +156,7 @@ class PushNotifications(object):
         response = session.send(request.prepare())
         try:
             response_body = response.json()
-        except json.decoder.JSONDecodeError:
+        except ValueError:
             response_body = {}
 
         if response.status_code != 200:

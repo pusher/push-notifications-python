@@ -1,0 +1,10 @@
+language: python
+python:
+  - "2.7"
+  - "3.6"
+install:
+  - pip install -Ur requirements.txt
+  - pip install -Ur dev_requirements.txt
+script:
+  - python -m pylint ./pusher_push_notifications/*.py
+  - python -m nose -s

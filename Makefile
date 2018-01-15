@@ -27,4 +27,3 @@ test_python2: venv
 
 lint: venv
 	@venv/bin/python3 -m pylint ./pusher_push_notifications/*.py
-
