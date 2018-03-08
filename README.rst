@@ -42,6 +42,9 @@ Once you have created your PushNotifications instance you can publish a push not
 
 .. code::
 
-  response = pn_client.publish(interests=['hello'], publish_body={'apns': {'aps': {'alert': 'Hello!'}}})
+  response = pn_client.publish(
+      interests=['hello'],
+      publish_body={'apns': {'aps': {'alert': 'Hello!'}}, 'fcm': {'notification': {'title': 'Hello', 'body': 'Hello, World!'}}}
+  )
 
   print(response['publishId'])
