@@ -119,13 +119,6 @@ class PushNotifications(object):
                         INTEREST_MAX_LENGTH,
                     )
                 )
-            if '-' in interest:
-                raise ValueError(
-                    'Interest "{}" contains a "-" which is forbidden. '.format(
-                        interest,
-                    )
-                    + 'have you considered using a "_" instead?'
-                )
             if not INTEREST_REGEX.match(interest):
                 raise ValueError(
                     'Interest "{}" contains a forbidden character. '.format(
