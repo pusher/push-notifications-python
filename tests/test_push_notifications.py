@@ -217,7 +217,7 @@ class TestPushNotifications(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             pn_client.publish(
-                    interests=['bad-interest'],
+                    interests=['bad|interest'],
                     publish_body={
                         'apns': {
                             'aps': {
