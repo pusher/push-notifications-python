@@ -6,9 +6,9 @@ import re
 import requests
 import six
 
-SDK_VERSION = '0.9.1'
+SDK_VERSION = '0.9.2'
 INTEREST_MAX_LENGTH = 164
-INTEREST_REGEX = re.compile('^(_|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$')
+INTEREST_REGEX = re.compile('^(_-|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$')
 
 
 class PusherValidationError(ValueError):
@@ -118,13 +118,6 @@ class PushNotifications(object):
                         interest,
                         INTEREST_MAX_LENGTH,
                     )
-                )
-            if '-' in interest:
-                raise ValueError(
-                    'Interest "{}" contains a "-" which is forbidden. '.format(
-                        interest,
-                    )
-                    + 'have you considered using a "_" instead?'
                 )
             if not INTEREST_REGEX.match(interest):
                 raise ValueError(
