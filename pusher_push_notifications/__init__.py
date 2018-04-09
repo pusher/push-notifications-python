@@ -9,25 +9,30 @@ import six
 SDK_VERSION = '0.9.2'
 INTEREST_MAX_LENGTH = 164
 INTEREST_REGEX = re.compile('^(_-|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$')
+MAX_NUMBER_OF_INTERESTS = 100
 
 
 class PusherValidationError(ValueError):
     """Error thrown when the Push Notifications publish body is invalid"""
     pass
 
+
 class PusherAuthError(ValueError):
     """Error thrown when the Push Notifications secret key is incorrect"""
     pass
 
+
 class PusherMissingInstanceError(KeyError):
     """Error thrown when the instance id used does not exist"""
     pass
+
 
 class PusherServerError(Exception):
     """Error thrown when the Push Notifications service has an internal server
     error
     """
     pass
+
 
 def handle_http_error(response_body, status_code):
     """Handle different http error codes from the Push Notifications service"""
@@ -96,6 +101,7 @@ class PushNotifications(object):
             TypeError: if publish_body is not a dict
             TypeError: if any interest is not a string
             ValueError: if len(interests) < 1
+            ValueError: if len(interests) > 100
             ValueError: if any interest length is greater than the max
             ValueError: if any interest contains a forbidden character
 
@@ -106,7 +112,11 @@ class PushNotifications(object):
             raise TypeError('publish_body must be a dictionary')
         if not interests:
             raise ValueError('Publishes must target at least one interest')
-
+        if len(interests) > MAX_NUMBER_OF_INTERESTS:
+            raise ValueError('Number of interests ({}) exceeds maximum of {}'.format(
+                len(interests),
+                MAX_NUMBER_OF_INTERESTS
+            ))
         for interest in interests:
             if not isinstance(interest, six.string_types):
                 raise TypeError(
