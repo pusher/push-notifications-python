@@ -8,7 +8,7 @@ import six
 
 SDK_VERSION = '0.9.2'
 INTEREST_MAX_LENGTH = 164
-INTEREST_REGEX = re.compile('^(_-|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$')
+INTEREST_REGEX = re.compile('^(_|-|=|@|,|\\.|:|[A-Z]|[a-z]|[0-9])*$')
 MAX_NUMBER_OF_INTERESTS = 100
 
 
@@ -135,7 +135,7 @@ class PushNotifications(object):
                         interest,
                     )
                     + 'Allowed characters are: ASCII upper/lower-case letters, '
-                    + 'numbers or one of _=@,.:'
+                    + 'numbers or one of _=@,.:-'
                 )
 
         publish_body['interests'] = interests

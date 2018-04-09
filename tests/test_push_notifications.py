@@ -192,7 +192,7 @@ class TestPushNotifications(unittest.TestCase):
                 },
             )
             pn_client.publish(
-                interests=[str(el) for el in random.sample(range(1000), 100)],
+                interests=['interest-' + str(i) for i in range(0, 100)],
                 publish_body={
                     'apns': {
                         'aps': {
@@ -207,8 +207,6 @@ class TestPushNotifications(unittest.TestCase):
             'INSTANCE_ID',
             'SECRET_KEY'
         )
-        interests_ints = random.sample(range(1000), 101)
-
         with requests_mock.Mocker() as http_mock:
             http_mock.register_uri(
                 requests_mock.ANY,
@@ -220,7 +218,7 @@ class TestPushNotifications(unittest.TestCase):
             )
             with self.assertRaises(ValueError):
                 pn_client.publish(
-                    interests=[str(el) for el in interests_ints],
+                    interests=['interest-' + str(i) for i in range(0, 101)],
                     publish_body={
                         'apns': {
                             'aps': {
