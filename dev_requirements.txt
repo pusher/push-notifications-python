@@ -1,3 +1,4 @@
 nose
 pylint
 requests-mock
+collective.checkdocs
