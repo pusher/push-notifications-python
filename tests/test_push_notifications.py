@@ -4,7 +4,6 @@ import unittest
 
 import requests_mock
 
-import random
 
 from pusher_push_notifications import (
     PushNotifications,
