@@ -4,6 +4,7 @@ import unittest
 
 import requests_mock
 
+
 from pusher_push_notifications import (
     PushNotifications,
     PusherAuthError,
@@ -130,7 +131,6 @@ class TestPushNotifications(unittest.TestCase):
             },
         )
 
-
     def test_publish_should_fail_if_interests_not_list(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
@@ -138,14 +138,14 @@ class TestPushNotifications(unittest.TestCase):
         )
         with self.assertRaises(TypeError):
             pn_client.publish(
-                    interests=False,
-                    publish_body={
-                        'apns': {
-                            'aps': {
-                                'alert': 'Hello World!',
-                            },
+                interests=False,
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
                         },
                     },
+                },
             )
 
     def test_publish_should_fail_if_body_not_dict(self):
@@ -155,8 +155,8 @@ class TestPushNotifications(unittest.TestCase):
         )
         with self.assertRaises(TypeError):
             pn_client.publish(
-                    interests=['donuts'],
-                    publish_body=False,
+                interests=['donuts'],
+                publish_body=False,
             )
 
     def test_publish_should_fail_if_no_interests_passed(self):
@@ -166,7 +166,58 @@ class TestPushNotifications(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             pn_client.publish(
-                    interests=[],
+                interests=[],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
+                        },
+                    },
+                },
+            )
+
+    def test_publish_should_succeed_if_100_interests_passed(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=200,
+                json={
+                    'publishId': '1234',
+                },
+            )
+            pn_client.publish(
+                interests=['interest-' + str(i) for i in range(0, 100)],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
+                        },
+                    },
+                },
+            )
+
+    def test_publish_should_fail_if_too_many_interests_passed(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=200,
+                json={
+                    'publishId': '1234',
+                },
+            )
+            with self.assertRaises(ValueError):
+                pn_client.publish(
+                    interests=['interest-' + str(i) for i in range(0, 101)],
                     publish_body={
                         'apns': {
                             'aps': {
@@ -174,7 +225,7 @@ class TestPushNotifications(unittest.TestCase):
                             },
                         },
                     },
-            )
+                )
 
     def test_publish_should_fail_if_interest_not_a_string(self):
         pn_client = PushNotifications(
@@ -183,14 +234,14 @@ class TestPushNotifications(unittest.TestCase):
         )
         with self.assertRaises(TypeError):
             pn_client.publish(
-                    interests=[False],
-                    publish_body={
-                        'apns': {
-                            'aps': {
-                                'alert': 'Hello World!',
-                            },
+                interests=[False],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
                         },
                     },
+                },
             )
 
     def test_publish_should_fail_if_interest_too_long(self):
@@ -200,14 +251,14 @@ class TestPushNotifications(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             pn_client.publish(
-                    interests=['A'*200],
-                    publish_body={
-                        'apns': {
-                            'aps': {
-                                'alert': 'Hello World!',
-                            },
+                interests=['A'*200],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
                         },
                     },
+                },
             )
 
     def test_publish_should_fail_if_interest_contains_invalid_chars(self):
@@ -217,25 +268,25 @@ class TestPushNotifications(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             pn_client.publish(
-                    interests=['bad|interest'],
-                    publish_body={
-                        'apns': {
-                            'aps': {
-                                'alert': 'Hello World!',
-                            },
+                interests=['bad|interest'],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
                         },
                     },
+                },
             )
         with self.assertRaises(ValueError):
             pn_client.publish(
-                    interests=['bad(interest)'],
-                    publish_body={
-                        'apns': {
-                            'aps': {
-                                'alert': 'Hello World!',
-                            },
+                interests=['bad(interest)'],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
                         },
                     },
+                },
             )
 
     def test_publish_should_raise_on_http_4xx_error(self):
@@ -252,14 +303,14 @@ class TestPushNotifications(unittest.TestCase):
             )
             with self.assertRaises(PusherValidationError):
                 pn_client.publish(
-                        interests=['donuts'],
-                        publish_body={
-                            'apns': {
-                                'aps': {
-                                    'alert': 'Hello World!',
-                                },
+                    interests=['donuts'],
+                    publish_body={
+                        'apns': {
+                            'aps': {
+                                'alert': 'Hello World!',
                             },
                         },
+                    },
                 )
 
     def test_publish_should_raise_on_http_5xx_error(self):
@@ -276,14 +327,14 @@ class TestPushNotifications(unittest.TestCase):
             )
             with self.assertRaises(PusherServerError):
                 pn_client.publish(
-                        interests=['donuts'],
-                        publish_body={
-                            'apns': {
-                                'aps': {
-                                    'alert': 'Hello World!',
-                                },
+                    interests=['donuts'],
+                    publish_body={
+                        'apns': {
+                            'aps': {
+                                'alert': 'Hello World!',
                             },
                         },
+                    },
                 )
 
     def test_publish_should_raise_on_http_401_error(self):
@@ -300,14 +351,14 @@ class TestPushNotifications(unittest.TestCase):
             )
             with self.assertRaises(PusherAuthError):
                 pn_client.publish(
-                        interests=['donuts'],
-                        publish_body={
-                            'apns': {
-                                'aps': {
-                                    'alert': 'Hello World!',
-                                },
+                    interests=['donuts'],
+                    publish_body={
+                        'apns': {
+                            'aps': {
+                                'alert': 'Hello World!',
                             },
                         },
+                    },
                 )
 
     def test_publish_should_raise_on_http_404_error(self):
@@ -324,12 +375,12 @@ class TestPushNotifications(unittest.TestCase):
             )
             with self.assertRaises(PusherMissingInstanceError):
                 pn_client.publish(
-                        interests=['donuts'],
-                        publish_body={
-                            'apns': {
-                                'aps': {
-                                    'alert': 'Hello World!',
-                                },
+                    interests=['donuts'],
+                    publish_body={
+                        'apns': {
+                            'aps': {
+                                'alert': 'Hello World!',
                             },
                         },
+                    },
                 )
