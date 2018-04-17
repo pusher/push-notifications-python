@@ -400,3 +400,29 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 )
             self.assertIn('Instance not found: blah', str(e.exception))
+
+
+    def test_publish_should_error_correctly_if_error_not_json(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=500,
+                text='<notjson></notjson>',
+            )
+            with self.assertRaises(PusherServerError) as e:
+                pn_client.publish(
+                    interests=['donuts'],
+                    publish_body={
+                        'apns': {
+                            'aps': {
+                                'alert': 'Hello World!',
+                            },
+                        },
+                    },
+                )
+            self.assertIn('Unknown error: no description', str(e.exception))
