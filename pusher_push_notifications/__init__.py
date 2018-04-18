@@ -113,10 +113,12 @@ class PushNotifications(object):
         if not interests:
             raise ValueError('Publishes must target at least one interest')
         if len(interests) > MAX_NUMBER_OF_INTERESTS:
-            raise ValueError('Number of interests ({}) exceeds maximum of {}'.format(
-                len(interests),
-                MAX_NUMBER_OF_INTERESTS
-            ))
+            raise ValueError(
+                'Number of interests ({}) exceeds maximum of {}'.format(
+                    len(interests),
+                    MAX_NUMBER_OF_INTERESTS,
+                ),
+            )
         for interest in interests:
             if not isinstance(interest, six.string_types):
                 raise TypeError(

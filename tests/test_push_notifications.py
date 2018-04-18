@@ -22,26 +22,29 @@ class TestPushNotifications(unittest.TestCase):
         )
 
     def test_constructor_should_fail_if_instance_id_not_string(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as e:
             PushNotifications(
                 instance_id=False,
                 secret_key='1234',
             )
+        self.assertIn('instance_id must be a string', str(e.exception))
 
     def test_constructor_should_fail_if_secret_key_not_string(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as e:
             PushNotifications(
                 instance_id='1234',
                 secret_key=False,
             )
+        self.assertIn('secret_key must be a string', str(e.exception))
 
     def test_constructor_should_fail_if_endpoint_not_string(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as e:
             PushNotifications(
                 instance_id='1234',
                 secret_key='1234',
                 endpoint=False,
             )
+        self.assertIn('endpoint must be a string', str(e.exception))
 
     def test_constructor_should_set_endpoint_default(self):
         pn_client = PushNotifications(
@@ -136,7 +139,7 @@ class TestPushNotifications(unittest.TestCase):
             'INSTANCE_ID',
             'SECRET_KEY'
         )
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as e:
             pn_client.publish(
                 interests=False,
                 publish_body={
@@ -147,24 +150,26 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 },
             )
+        self.assertIn('interests must be a list', str(e.exception))
 
     def test_publish_should_fail_if_body_not_dict(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
         )
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as e:
             pn_client.publish(
                 interests=['donuts'],
                 publish_body=False,
             )
+        self.assertIn('publish_body must be a dictionary', str(e.exception))
 
     def test_publish_should_fail_if_no_interests_passed(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
         )
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as e:
             pn_client.publish(
                 interests=[],
                 publish_body={
@@ -175,6 +180,7 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 },
             )
+        self.assertIn('must target at least one interest', str(e.exception))
 
     def test_publish_should_succeed_if_100_interests_passed(self):
         pn_client = PushNotifications(
@@ -215,7 +221,7 @@ class TestPushNotifications(unittest.TestCase):
                     'publishId': '1234',
                 },
             )
-            with self.assertRaises(ValueError):
+            with self.assertRaises(ValueError) as e:
                 pn_client.publish(
                     interests=['interest-' + str(i) for i in range(0, 101)],
                     publish_body={
@@ -226,13 +232,14 @@ class TestPushNotifications(unittest.TestCase):
                         },
                     },
                 )
+            self.assertIn('Number of interests (101) exceeds maximum', str(e.exception))
 
     def test_publish_should_fail_if_interest_not_a_string(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
         )
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as e:
             pn_client.publish(
                 interests=[False],
                 publish_body={
@@ -243,13 +250,14 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 },
             )
+        self.assertIn('Interest False is not a string', str(e.exception))
 
     def test_publish_should_fail_if_interest_too_long(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
         )
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as e:
             pn_client.publish(
                 interests=['A'*200],
                 publish_body={
@@ -260,13 +268,14 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 },
             )
+        self.assertIn('longer than the maximum of 164 chars', str(e.exception))
 
     def test_publish_should_fail_if_interest_contains_invalid_chars(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
         )
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as e:
             pn_client.publish(
                 interests=['bad|interest'],
                 publish_body={
@@ -277,7 +286,9 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 },
             )
-        with self.assertRaises(ValueError):
+        self.assertIn('"bad|interest" contains a forbidden character', str(e.exception))
+
+        with self.assertRaises(ValueError) as e:
             pn_client.publish(
                 interests=['bad(interest)'],
                 publish_body={
@@ -288,6 +299,7 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 },
             )
+        self.assertIn('"bad(interest)" contains a forbidden character', str(e.exception))
 
     def test_publish_should_raise_on_http_4xx_error(self):
         pn_client = PushNotifications(
@@ -301,7 +313,7 @@ class TestPushNotifications(unittest.TestCase):
                 status_code=400,
                 json={'error': 'Invalid request', 'description': 'blah'},
             )
-            with self.assertRaises(PusherValidationError):
+            with self.assertRaises(PusherValidationError) as e:
                 pn_client.publish(
                     interests=['donuts'],
                     publish_body={
@@ -312,6 +324,7 @@ class TestPushNotifications(unittest.TestCase):
                         },
                     },
                 )
+            self.assertIn('Invalid request: blah', str(e.exception))
 
     def test_publish_should_raise_on_http_5xx_error(self):
         pn_client = PushNotifications(
@@ -325,7 +338,7 @@ class TestPushNotifications(unittest.TestCase):
                 status_code=500,
                 json={'error': 'Server error', 'description': 'blah'},
             )
-            with self.assertRaises(PusherServerError):
+            with self.assertRaises(PusherServerError) as e:
                 pn_client.publish(
                     interests=['donuts'],
                     publish_body={
@@ -336,6 +349,7 @@ class TestPushNotifications(unittest.TestCase):
                         },
                     },
                 )
+            self.assertIn('Server error: blah', str(e.exception))
 
     def test_publish_should_raise_on_http_401_error(self):
         pn_client = PushNotifications(
@@ -349,7 +363,7 @@ class TestPushNotifications(unittest.TestCase):
                 status_code=401,
                 json={'error': 'Auth error', 'description': 'blah'},
             )
-            with self.assertRaises(PusherAuthError):
+            with self.assertRaises(PusherAuthError) as e:
                 pn_client.publish(
                     interests=['donuts'],
                     publish_body={
@@ -360,6 +374,7 @@ class TestPushNotifications(unittest.TestCase):
                         },
                     },
                 )
+            self.assertIn('Auth error: blah', str(e.exception))
 
     def test_publish_should_raise_on_http_404_error(self):
         pn_client = PushNotifications(
@@ -373,7 +388,7 @@ class TestPushNotifications(unittest.TestCase):
                 status_code=404,
                 json={'error': 'Instance not found', 'description': 'blah'},
             )
-            with self.assertRaises(PusherMissingInstanceError):
+            with self.assertRaises(PusherMissingInstanceError) as e:
                 pn_client.publish(
                     interests=['donuts'],
                     publish_body={
@@ -384,3 +399,4 @@ class TestPushNotifications(unittest.TestCase):
                         },
                     },
                 )
+            self.assertIn('Instance not found: blah', str(e.exception))
