@@ -1,13 +1,13 @@
 .. image:: https://travis-ci.org/pusher/push-notifications-python.svg?branch=master
    :target: https://travis-ci.org/pusher/push-notifications-python
 
-Pusher Push Notifications Python server SDK
-===========================================
-Full documentation for this SDK can be found `here <https://docs.pusher.com/push-notifications/reference/server-sdk-python>`__
+Pusher Beams Python server SDK
+==============================
+Full documentation for this SDK can be found `here <https://docs.pusher.com/beams/reference/server-sdk-python>`__
 
 Installation
 ------------
-The Pusher Notifications Python server SDK is available on PyPi
+The Pusher Beams Python server SDK is available on PyPi
 `here <https://pypi.python.org/pypi/pusher_push_notifications/>`__.
 
 You can install this SDK by using
@@ -24,7 +24,7 @@ Usage
 Configuring the SDK for Your Instance
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Use your instance id and secret (you can get these from the
-`dashboard <https://dash.pusher.com>`__) to create a PushNotifications instance:
+`dashboard <https://dash.pusher.com/beams>`__) to create a Beams PushNotifications instance:
 
 .. code::
 
@@ -38,7 +38,7 @@ Use your instance id and secret (you can get these from the
 Publishing a Notification
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once you have created your PushNotifications instance you can publish a push notification to your registered & subscribed devices:
+Once you have created your Beams PushNotifications instance you can publish a push notification to your registered & subscribed devices:
 
 .. code::
 
