@@ -293,6 +293,19 @@ class TestPushNotifications(unittest.TestCase):
         )
         with self.assertRaises(ValueError) as e:
             pn_client.publish(
+                interests=['bad:interest'],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
+                        },
+                    },
+                },
+            )
+        self.assertIn('"bad:interest" contains a forbidden character', str(e.exception))
+
+        with self.assertRaises(ValueError) as e:
+            pn_client.publish(
                 interests=['bad|interest'],
                 publish_body={
                     'apns': {
