@@ -128,7 +128,7 @@ class TestPushNotifications(unittest.TestCase):
                 'content-type': 'application/json',
                 'content-length': '69',
                 'authorization': 'Bearer SECRET_KEY',
-                'x-pusher-library': 'pusher-push-notifications-python 0.10.0',
+                'x-pusher-library': 'pusher-push-notifications-python 0.10.1',
                 'host': 'instance_id.pushnotifications.pusher.com',
             },
         )
@@ -455,3 +455,4 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 )
             self.assertIn('Unknown error: no description', str(e.exception))
+
