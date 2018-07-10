@@ -58,8 +58,14 @@ class PushNotifications(object):
     def __init__(self, instance_id, secret_key, endpoint=None):
         if not isinstance(instance_id, six.string_types):
             raise TypeError('instance_id must be a string')
+        if instance_id == '':
+            raise ValueError('instance_id cannot be the empty string')
+
         if not isinstance(secret_key, six.string_types):
             raise TypeError('secret_key must be a string')
+        if secret_key == '':
+            raise ValueError('secret_key cannot be the empty string')
+
         if (endpoint is not None
                 and not isinstance(endpoint, six.string_types)):
             raise TypeError('endpoint must be a string')
