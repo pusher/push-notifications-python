@@ -143,7 +143,7 @@ class PushNotifications(object):
                         interest,
                     )
                     + 'Allowed characters are: ASCII upper/lower-case letters, '
-                    + 'numbers or one of _=@,.:-'
+                    + 'numbers or one of _=@,.;-'
                 )
 
         publish_body['interests'] = interests
