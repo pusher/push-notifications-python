@@ -1,0 +1,3 @@
+[MESSAGES CONTROL]
+# R0205 - This is for python 3 only and this library is 2/3 compatible
+disable=R0205
