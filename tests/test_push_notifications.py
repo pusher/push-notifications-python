@@ -128,7 +128,7 @@ class TestPushNotifications(unittest.TestCase):
                 'content-type': 'application/json',
                 'content-length': '69',
                 'authorization': 'Bearer SECRET_KEY',
-                'x-pusher-library': 'pusher-push-notifications-python 1.0.0',
+                'x-pusher-library': 'pusher-push-notifications-python 1.0.1',
                 'host': 'instance_id.pushnotifications.pusher.com',
             },
         )

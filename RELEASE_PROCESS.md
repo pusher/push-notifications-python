@@ -15,6 +15,7 @@ password = <password is in LastPass>
 ### Create release commit
  - Update all references to old version (e.g. in setup.py)
  - Commit changes with message "Bump version to x.y.z"
+ - Update Changelog
  - Push changes
  - Create Github release
 ### Build package

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.0.1] - 2018-11-19
+### Fixed
+ - Updated requests version to include fix for CVE-2018-18074
+
 ## [1.0.0] - 2018-07-31
 ### Added
  - Changelog for GA release
