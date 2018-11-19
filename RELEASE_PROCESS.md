@@ -1,7 +1,8 @@
 # Release a new Push Notifications Python version
 ## Requirements
 - Python
-- Twine (pip install twine)
+- Twine (`pip install twine`)
+- wheel (`pip install wheel`)
 - .pypirc
 ### pypirc
 Create a `.pypirc` file in your home directory:
@@ -26,7 +27,7 @@ $ python setup.py sdist bdist_wheel
 ```
 $ twine upload --repository-url https://test.pypi.org/legacy/ dist/*
 ```
-(Then check that this worked at https://test.pypi.org)
+(Then check that this worked at https://test.pypi.org/project/pusher-push-notifications/)
 
 ### Upload to production PyPi
 ```
