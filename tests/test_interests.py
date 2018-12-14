@@ -1,82 +1,20 @@
-"""Unit tests for Pusher Push Notifications Python server SDK"""
+"""Unit tests interests based publishing"""
 
+import time
 import unittest
+
+import requests_mock
 
 from pusher_push_notifications import (
     PushNotifications,
+    PusherAuthError,
+    PusherMissingInstanceError,
+    PusherServerError,
+    PusherValidationError,
 )
 
 
-class TestPushNotifications(unittest.TestCase):
-    def test_constructor_should_accept_valid_params(self):
-        PushNotifications(
-            instance_id='1234',
-            secret_key='1234',
-        )
-
-    def test_constructor_should_fail_if_instance_id_not_string(self):
-        with self.assertRaises(TypeError) as e:
-            PushNotifications(
-                instance_id=False,
-                secret_key='1234',
-            )
-        self.assertIn('instance_id must be a string', str(e.exception))
-
-    def test_constructor_should_fail_if_instance_id_empty_string(self):
-        with self.assertRaises(ValueError) as e:
-            PushNotifications(
-                instance_id='',
-                secret_key='1234',
-            )
-        self.assertIn('instance_id cannot be the empty string', str(e.exception))
-
-    def test_constructor_should_fail_if_secret_key_not_string(self):
-        with self.assertRaises(TypeError) as e:
-            PushNotifications(
-                instance_id='1234',
-                secret_key=False,
-            )
-        self.assertIn('secret_key must be a string', str(e.exception))
-
-    def test_constructor_should_fail_if_secret_key_empty_string(self):
-        with self.assertRaises(ValueError) as e:
-            PushNotifications(
-                instance_id='1234',
-                secret_key='',
-            )
-        self.assertIn('secret_key cannot be the empty string', str(e.exception))
-
-    def test_constructor_should_fail_if_endpoint_not_string(self):
-        with self.assertRaises(TypeError) as e:
-            PushNotifications(
-                instance_id='1234',
-                secret_key='1234',
-                endpoint=False,
-            )
-        self.assertIn('endpoint must be a string', str(e.exception))
-
-    def test_constructor_should_set_endpoint_default(self):
-        pn_client = PushNotifications(
-            instance_id='INSTANCE_ID',
-            secret_key='1234',
-        )
-        self.assertEqual(
-            pn_client.endpoint,
-            'instance_id.pushnotifications.pusher.com',
-        )
-
-    def test_constructor_should_accept_endpoint_override(self):
-        pn_client = PushNotifications(
-            instance_id='INSTANCE_ID',
-            secret_key='1234',
-            endpoint='example.com/push',
-        )
-        self.assertEqual(
-            pn_client.endpoint,
-            'example.com/push',
-        )
-<<<<<<< HEAD
-
+class TestPushNotificationsInterests(unittest.TestCase):
     def test_publish_should_make_correct_http_request(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
@@ -122,7 +60,7 @@ class TestPushNotifications(unittest.TestCase):
                 'content-type': 'application/json',
                 'content-length': '69',
                 'authorization': 'Bearer SECRET_KEY',
-                'x-pusher-library': 'pusher-push-notifications-python 1.0.3',
+                'x-pusher-library': 'pusher-push-notifications-python 1.0.1',
                 'host': 'instance_id.pushnotifications.pusher.com',
             },
         )
@@ -449,50 +387,3 @@ class TestPushNotifications(unittest.TestCase):
                     },
                 )
             self.assertIn('Unknown error: no description', str(e.exception))
-
-    def test_authenticate_user_should_return_token(self):
-        user_id = 'user-0001'
-        pn_client = PushNotifications(
-            'INSTANCE_ID',
-            'SECRET_KEY'
-        )
-
-        token_string = pn_client.authenticate_user(user_id)
-
-        self.assertIsInstance(token_string, six.string_types)
-        self.assertTrue(len(token_string) > 0)
-
-        decoded_token = jwt.decode(
-            token_string,
-            'SECRET_KEY',
-            algorithm='HS256',
-        )
-
-        expected_issuer = 'https://INSTANCE_ID.pushnotifications.pusher.com'
-        expected_subject = user_id
-
-        self.assertEquals(decoded_token.get('iss'), expected_issuer)
-        self.assertEquals(decoded_token.get('sub'), expected_subject)
-        self.assertIsNotNone(decoded_token.get('exp'))
-        self.assertTrue(decoded_token.get('exp') > time.time())
-
-
-    def test_authenticate_user_should_fail_if_user_id_not_a_string(self):
-        user_id = False
-        pn_client = PushNotifications(
-            'INSTANCE_ID',
-            'SECRET_KEY'
-        )
-        with self.assertRaises(ValueError) as e:
-            pn_client.authenticate_user(user_id)
-        self.assertIn('user_id must be a string', str(e.exception))
-
-    def test_authenticate_user_should_fail_if_user_id_too_long(self):
-        user_id = 'A' * 165
-        pn_client = PushNotifications(
-            'INSTANCE_ID',
-            'SECRET_KEY'
-        )
-        with self.assertRaises(ValueError) as e:
-            pn_client.authenticate_user(user_id)
-        self.assertIn('longer than the maximum of 164 chars', str(e.exception))
