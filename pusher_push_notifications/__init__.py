@@ -1,15 +1,22 @@
 """Pusher Push Notifications Python server SDK"""
 
+import datetime
 import json
 import re
+import time
 
+import jwt
 import requests
 import six
 
 SDK_VERSION = '1.0.2'
+
 INTEREST_MAX_LENGTH = 164
 INTEREST_REGEX = re.compile('^(_|-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$')
 MAX_NUMBER_OF_INTERESTS = 100
+
+USER_ID_MAX_LENGTH = 164
+AUTH_TOKEN_DURATION = datetime.timedelta(days=1)
 
 
 class PusherError(Exception):
@@ -174,3 +181,39 @@ class PushNotifications(object):
             handle_http_error(response_body, response.status_code)
 
         return response_body
+
+    def authenticate_user(self, user_id):
+        """Generate an auth token which will allow devices to associate
+            themselves with the given user id
+
+        Args:
+            user_id (string): user id for which the token will be valid
+
+        Returns:
+            auth token for the requested user id (string)
+
+        Raises:
+            ValueError: if user_id is not a string
+            ValueError: is user_id is longer than the maximum of 164 chars
+
+        """
+        if not isinstance(user_id, six.string_types):
+            raise ValueError('user_id must be a string')
+        if len(user_id) > USER_ID_MAX_LENGTH:
+            raise ValueError('user_id longer than the maximum of 164 chars')
+
+        issuer = 'https://{}.pushnotifications.pusher.com'.format(self.instance_id)
+
+        now = datetime.datetime.utcnow()
+        expiry_datetime = now + AUTH_TOKEN_DURATION
+        expiry_timestamp = int(time.mktime(expiry_datetime.timetuple()))
+
+        return jwt.encode(
+            {
+                'iss': issuer,
+                'sub': user_id,
+                'exp': expiry_timestamp,
+            },
+            self.secret_key,
+            algorithm='HS256',
+        ).decode('utf-8')
