@@ -5,6 +5,7 @@ import datetime
 import json
 import re
 import time
+import warnings
 
 import jwt
 import requests
@@ -97,6 +98,44 @@ class PushNotifications(object):
         return self._endpoint or default_endpoint
 
     def publish(self, interests, publish_body):
+        """Publish the given publish_body to the specified interests.
+
+        Args:
+            interests (list): List of interests that the publish body should
+                be sent to.
+            publish_body (dict): Dict containing the body of the push
+                notification publish request.
+                (see https://docs.pusher.com/push-notifications)
+
+        Returns:
+            A dict containing the publish response from the Pusher Push
+            Notifications service.
+            (see https://docs.pusher.com/push-notifications)
+
+        Raises:
+            PusherAuthError: if the secret_key is incorrect
+            PusherMissingInstanceError: if the instance_id is incorrect
+            PusherServerError: if the Push Notifications service returns
+                an error
+            PusherValidationError: if the publish_body is invalid
+            TypeError: if interests is not a list
+            TypeError: if publish_body is not a dict
+            TypeError: if any interest is not a string
+            ValueError: if len(interests) < 1
+            ValueError: if len(interests) > 100
+            ValueError: if any interest length is greater than the max
+            ValueError: if any interest contains a forbidden character
+
+        .. deprecated::
+            Use :func:`publish_to_interests` instead.
+        """
+        warnings.warn(
+            "publish method is deprecated. Please use publish_to_interests.",
+            DeprecationWarning
+        )
+        return self.publish_to_interests(interests, publish_body)
+
+    def publish_to_interests(self, interests, publish_body):
         """Publish the given publish_body to the specified interests.
 
         Args:
