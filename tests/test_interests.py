@@ -11,6 +11,7 @@ from pusher_push_notifications import (
     PusherMissingInstanceError,
     PusherServerError,
     PusherValidationError,
+    PusherBadResponseError,
 )
 
 
@@ -387,3 +388,28 @@ class TestPushNotificationsInterests(unittest.TestCase):
                     },
                 )
             self.assertIn('Unknown error: no description', str(e.exception))
+
+    def test_publish_should_handle_not_json_success(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=200,
+                text='<notjson></notjson>',
+            )
+            with self.assertRaises(PusherBadResponseError) as e:
+                pn_client.publish(
+                    interests=['donuts'],
+                    publish_body={
+                        'apns': {
+                            'aps': {
+                                'alert': 'Hello World!',
+                            },
+                        },
+                    },
+                )
+            self.assertIn('The server returned a malformed response', str(e.exception))
