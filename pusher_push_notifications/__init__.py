@@ -339,12 +339,12 @@ class PushNotifications(object):
             auth token for the requested user id (string)
 
         Raises:
-            ValueError: if user_id is not a string
+            TypeError: if user_id is not a string
             ValueError: is user_id is longer than the maximum of 164 chars
 
         """
         if not isinstance(user_id, six.string_types):
-            raise ValueError('user_id must be a string')
+            raise TypeError('user_id must be a string')
         if len(user_id) > USER_ID_MAX_LENGTH:
             raise ValueError('user_id longer than the maximum of 164 chars')
 
@@ -363,3 +363,42 @@ class PushNotifications(object):
             self.secret_key,
             algorithm='HS256',
         ).decode('utf-8')
+
+    def delete_user(self, user_id):
+        """Remove the user with the given ID (and all of their devices) from
+        the Pusher Beams database. The user will no longer receive any
+        notifications. This action cannot be undone.
+
+        Args:
+            user_id (string): id of the user to be deleted
+
+        Returns:
+            None
+
+        Raises:
+            TypeError: if user_id is not a string
+            ValueError: is user_id is longer than the maximum of 164 chars
+
+        """
+        if not isinstance(user_id, six.string_types):
+            raise TypeError('user_id must be a string')
+        if len(user_id) > USER_ID_MAX_LENGTH:
+            raise ValueError('user_id longer than the maximum of 164 chars')
+
+        session = requests.Session()
+        request = requests.Request(
+            'DELETE',
+            'https://{}/user_api/v1/instances/{}/users/{}'.format(
+                self.endpoint,
+                self.instance_id,
+                user_id,
+            ),
+            headers={
+                'host': self.endpoint,
+                'authorization': 'Bearer {}'.format(self.secret_key),
+                'x-pusher-library': 'pusher-push-notifications-python {}'.format(
+                    SDK_VERSION,
+                )
+            },
+        )
+        session.send(request.prepare())

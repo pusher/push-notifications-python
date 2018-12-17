@@ -50,7 +50,7 @@ class TestPushNotificationsUsers(unittest.TestCase):
             'INSTANCE_ID',
             'SECRET_KEY'
         )
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(TypeError) as e:
             pn_client.authenticate_user(user_id)
         self.assertIn('user_id must be a string', str(e.exception))
 
@@ -419,3 +419,58 @@ class TestPushNotificationsUsers(unittest.TestCase):
                     },
                 )
             self.assertIn('The server returned a malformed response', str(e.exception))
+
+    def test_delete_user_should_make_correct_http_request(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=200,
+                json='',
+            )
+            pn_client.delete_user('alice')
+            req = http_mock.request_history[0]
+
+        method = req.method
+        path = req.path
+        headers = dict(req._request.headers.lower_items())
+
+        self.assertEqual(
+            method,
+            'DELETE',
+        )
+        self.assertEqual(
+            path,
+            '/user_api/v1/instances/instance_id/users/alice',
+        )
+        self.assertDictEqual(
+            headers,
+            {
+                'content-length': '0',
+                'authorization': 'Bearer SECRET_KEY',
+                'x-pusher-library': 'pusher-push-notifications-python 1.0.1',
+                'host': 'instance_id.pushnotifications.pusher.com',
+            },
+        )
+
+    def test_delete_user_should_fail_if_user_id_not_a_string(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with self.assertRaises(TypeError) as e:
+            pn_client.delete_user(False)
+        self.assertIn('user_id must be a string', str(e.exception))
+
+    def test_delete_user_should_fail_if_user_id_too_long(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with self.assertRaises(ValueError) as e:
+            pn_client.delete_user('A'*165)
+        self.assertIn('longer than the maximum of 164 chars', str(e.exception))
