@@ -1,5 +1,6 @@
 """Pusher Push Notifications Python server SDK"""
 
+import copy
 import datetime
 import json
 import re
@@ -17,6 +18,7 @@ MAX_NUMBER_OF_INTERESTS = 100
 
 USER_ID_MAX_LENGTH = 164
 AUTH_TOKEN_DURATION = datetime.timedelta(days=1)
+MAX_NUMBER_OF_USER_IDS = 1000
 
 
 class PusherError(Exception):
@@ -38,6 +40,11 @@ class PusherMissingInstanceError(PusherError, KeyError):
 class PusherServerError(PusherError, Exception):
     """Error thrown when the Push Notifications service has an internal server
     error
+    """
+
+class PusherBadResponseError(PusherError, Exception):
+    """Error thrown when the server returns a response the library cannot
+    understand
     """
 
 
@@ -153,6 +160,7 @@ class PushNotifications(object):
                     + 'numbers or one of _=@,.;-'
                 )
 
+        publish_body = copy.deepcopy(publish_body)
         publish_body['interests'] = interests
         session = requests.Session()
         request = requests.Request(
@@ -172,19 +180,118 @@ class PushNotifications(object):
         )
 
         response = session.send(request.prepare())
+
+        if response.status_code != 200:
+            try:
+                response_body = response.json()
+            except ValueError:
+                response_body = {}
+            handle_http_error(response_body, response.status_code)
+
         try:
             response_body = response.json()
         except ValueError:
-            response_body = {}
+            raise PusherBadResponseError(
+                'The server returned a malformed response',
+            )
+
+        return response_body
+
+    def publish_to_users(self, user_ids, publish_body):
+        """Publish the given publish_body to the specified users.
+
+        Args:
+            user_ids (list): List of ids of users that the publish body should
+                be sent to.
+            publish_body (dict): Dict containing the body of the push
+                notification publish request.
+                (see https://docs.pusher.com/push-notifications)
+
+        Returns:
+            A dict containing the publish response from the Pusher Push
+            Notifications service.
+            (see https://docs.pusher.com/push-notifications)
+
+        Raises:
+            PusherAuthError: if the secret_key is incorrect
+            PusherMissingInstanceError: if the instance_id is incorrect
+            PusherServerError: if the Push Notifications service returns
+                an error
+            PusherValidationError: if the publish_body is invalid
+            TypeError: if user_ids is not a list
+            TypeError: if publish_body is not a dict
+            TypeError: if any user id is not a string
+            ValueError: if len(user_ids) < 1
+            ValueError: if len(user_ids) is greater than the max
+            ValueError: if any user id length is greater than the max
+
+        """
+        if not isinstance(user_ids, list):
+            raise TypeError('user_ids must be a list')
+        if not isinstance(publish_body, dict):
+            raise TypeError('publish_body must be a dictionary')
+        if not user_ids:
+            raise ValueError('Publishes must target at least one user')
+        if len(user_ids) > MAX_NUMBER_OF_USER_IDS:
+            raise ValueError(
+                'Number of user ids ({}) exceeds maximum of {}'.format(
+                    len(user_ids),
+                    MAX_NUMBER_OF_USER_IDS,
+                ),
+            )
+        for user_id in user_ids:
+            if not isinstance(user_id, six.string_types):
+                raise TypeError(
+                    'User id {} is not a string'.format(user_id)
+                )
+            if len(user_id) > USER_ID_MAX_LENGTH:
+                raise ValueError(
+                    'User id "{}" is longer than the maximum of {} chars'.format(
+                        user_id,
+                        USER_ID_MAX_LENGTH,
+                    )
+                )
+
+        publish_body = copy.deepcopy(publish_body)
+        publish_body['users'] = user_ids
+        session = requests.Session()
+        request = requests.Request(
+            'POST',
+            'https://{}/publish_api/v1/instances/{}/publishes/users'.format(
+                self.endpoint,
+                self.instance_id,
+            ),
+            json=publish_body,
+            headers={
+                'host': self.endpoint,
+                'authorization': 'Bearer {}'.format(self.secret_key),
+                'x-pusher-library': 'pusher-push-notifications-python {}'.format(
+                    SDK_VERSION,
+                )
+            },
+        )
+
+        response = session.send(request.prepare())
 
         if response.status_code != 200:
+            try:
+                response_body = response.json()
+            except ValueError:
+                response_body = {}
             handle_http_error(response_body, response.status_code)
+
+        try:
+            response_body = response.json()
+        except ValueError:
+            raise PusherBadResponseError(
+                'The server returned a malformed response',
+            )
 
         return response_body
 
     def authenticate_user(self, user_id):
         """Generate an auth token which will allow devices to associate
-            themselves with the given user id
+        themselves with the given user id
 
         Args:
             user_id (string): user id for which the token will be valid
