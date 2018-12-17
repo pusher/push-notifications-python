@@ -12,26 +12,26 @@ INTEREST_REGEX = re.compile('^(_|-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$')
 MAX_NUMBER_OF_INTERESTS = 100
 
 
-class PusherValidationError(ValueError):
+class PusherError(Exception):
+    """Base class for all Pusher push notifications errors"""
+
+
+class PusherValidationError(PusherError, ValueError):
     """Error thrown when the Push Notifications publish body is invalid"""
-    pass
 
 
-class PusherAuthError(ValueError):
+class PusherAuthError(PusherError, ValueError):
     """Error thrown when the Push Notifications secret key is incorrect"""
-    pass
 
 
-class PusherMissingInstanceError(KeyError):
+class PusherMissingInstanceError(PusherError, KeyError):
     """Error thrown when the instance id used does not exist"""
-    pass
 
 
-class PusherServerError(Exception):
+class PusherServerError(PusherError, Exception):
     """Error thrown when the Push Notifications service has an internal server
     error
     """
-    pass
 
 
 def handle_http_error(response_body, status_code):
