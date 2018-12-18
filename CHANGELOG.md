@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+ - Support for "Users" feature: `publish_to_users`, `authenticate_user` and `delete_user`
+
+### Changed
+ - `publish` renamed to `publish_to_interests` (`publish` method deprecated).
 
 ## [1.0.2] - 2019-01-04
 ### Fixed
