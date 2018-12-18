@@ -5,12 +5,12 @@ import datetime
 import json
 import re
 import time
-import urllib
 import warnings
 
 import jwt
 import requests
 import six
+from six.moves import urllib
 
 SDK_VERSION = '1.0.2'
 
