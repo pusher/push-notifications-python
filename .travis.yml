@@ -5,7 +5,10 @@ python:
 install:
   - pip install -Ur requirements.txt
   - pip install -Ur dev_requirements.txt
+  - pip install codecov
 script:
   - python -m pylint ./pusher_push_notifications/*.py
-  - python -m nose -s
+  - python -m nose -s --with-coverage
   - python setup.py checkdocs
+after_success:
+  - codecov
