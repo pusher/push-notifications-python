@@ -1,5 +1,7 @@
 .. image:: https://travis-ci.org/pusher/push-notifications-python.svg?branch=master
    :target: https://travis-ci.org/pusher/push-notifications-python
+.. image:: https://codecov.io/gh/pusher/push-notifications-python/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/pusher/push-notifications-python
 
 Pusher Beams Python server SDK
 ==============================
