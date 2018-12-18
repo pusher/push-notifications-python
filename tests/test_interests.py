@@ -53,7 +53,7 @@ class TestPushNotificationsInterests(unittest.TestCase):
         )
         self.assertEqual(
             path,
-            '/publish_api/v1/instances/instance_id/publishes',
+            '/publish_api/v1/instances/instance_id/publishes/interests',
         )
         self.assertDictEqual(
             headers,
@@ -120,7 +120,7 @@ class TestPushNotificationsInterests(unittest.TestCase):
         )
         self.assertEqual(
             path,
-            '/publish_api/v1/instances/instance_id/publishes',
+            '/publish_api/v1/instances/instance_id/publishes/interests',
         )
         self.assertDictEqual(
             headers,

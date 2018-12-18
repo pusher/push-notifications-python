@@ -5,6 +5,7 @@ import datetime
 import json
 import re
 import time
+import urllib
 import warnings
 
 import jwt
@@ -49,8 +50,7 @@ class PusherBadResponseError(PusherError, Exception):
     """
 
 
-def handle_http_error(response_body, status_code):
-    """Handle different http error codes from the Push Notifications service"""
+def _handle_http_error(response_body, status_code):
     error_string = '{}: {}'.format(
         response_body.get('error', 'Unknown error'),
         response_body.get('description', 'no description'),
@@ -63,6 +63,17 @@ def handle_http_error(response_body, status_code):
         raise PusherValidationError(error_string)
     elif 500 <= status_code < 600:
         raise PusherServerError(error_string)
+
+
+def _make_url(scheme, host, path):
+    return urllib.parse.urlunparse([
+        scheme,
+        host,
+        path,
+        None,
+        None,
+        None,
+    ])
 
 
 class PushNotifications(object):
@@ -96,6 +107,46 @@ class PushNotifications(object):
             self.instance_id,
         ).lower()
         return self._endpoint or default_endpoint
+
+    def _make_request(self, method, path, path_params, body=None):
+        path_params = {
+            name: urllib.parse.quote(value)
+            for name, value in path_params.items()
+        }
+        path = path.format(**path_params)
+        url = _make_url(scheme='https', host=self.endpoint, path=path)
+
+        session = requests.Session()
+        request = requests.Request(
+            method,
+            url,
+            json=body,
+            headers={
+                'host': self.endpoint,
+                'authorization': 'Bearer {}'.format(self.secret_key),
+                'x-pusher-library': 'pusher-push-notifications-python {}'.format(
+                    SDK_VERSION,
+                )
+            },
+        )
+
+        response = session.send(request.prepare())
+
+        if response.status_code != 200:
+            try:
+                error_body = response.json()
+            except ValueError:
+                error_body = {}
+            _handle_http_error(error_body, response.status_code)
+
+        try:
+            response_body = response.json()
+        except ValueError:
+            raise PusherBadResponseError(
+                'The server returned a malformed response',
+            )
+
+        return response_body
 
     def publish(self, interests, publish_body):
         """Publish the given publish_body to the specified interests.
@@ -201,38 +252,15 @@ class PushNotifications(object):
 
         publish_body = copy.deepcopy(publish_body)
         publish_body['interests'] = interests
-        session = requests.Session()
-        request = requests.Request(
-            'POST',
-            'https://{}/publish_api/v1/instances/{}/publishes'.format(
-                self.endpoint,
-                self.instance_id,
-            ),
-            json=publish_body,
-            headers={
-                'host': self.endpoint,
-                'authorization': 'Bearer {}'.format(self.secret_key),
-                'x-pusher-library': 'pusher-push-notifications-python {}'.format(
-                    SDK_VERSION,
-                )
+
+        response_body = self._make_request(
+            method='POST',
+            path='/publish_api/v1/instances/{instance_id}/publishes/interests',
+            path_params={
+                'instance_id': self.instance_id,
             },
+            body=publish_body,
         )
-
-        response = session.send(request.prepare())
-
-        if response.status_code != 200:
-            try:
-                response_body = response.json()
-            except ValueError:
-                response_body = {}
-            handle_http_error(response_body, response.status_code)
-
-        try:
-            response_body = response.json()
-        except ValueError:
-            raise PusherBadResponseError(
-                'The server returned a malformed response',
-            )
 
         return response_body
 
@@ -293,38 +321,15 @@ class PushNotifications(object):
 
         publish_body = copy.deepcopy(publish_body)
         publish_body['users'] = user_ids
-        session = requests.Session()
-        request = requests.Request(
-            'POST',
-            'https://{}/publish_api/v1/instances/{}/publishes/users'.format(
-                self.endpoint,
-                self.instance_id,
-            ),
-            json=publish_body,
-            headers={
-                'host': self.endpoint,
-                'authorization': 'Bearer {}'.format(self.secret_key),
-                'x-pusher-library': 'pusher-push-notifications-python {}'.format(
-                    SDK_VERSION,
-                )
+
+        response_body = self._make_request(
+            method='POST',
+            path='/publish_api/v1/instances/{instance_id}/publishes/users',
+            path_params={
+                'instance_id': self.instance_id,
             },
+            body=publish_body,
         )
-
-        response = session.send(request.prepare())
-
-        if response.status_code != 200:
-            try:
-                response_body = response.json()
-            except ValueError:
-                response_body = {}
-            handle_http_error(response_body, response.status_code)
-
-        try:
-            response_body = response.json()
-        except ValueError:
-            raise PusherBadResponseError(
-                'The server returned a malformed response',
-            )
 
         return response_body
 
@@ -385,20 +390,11 @@ class PushNotifications(object):
         if len(user_id) > USER_ID_MAX_LENGTH:
             raise ValueError('user_id longer than the maximum of 164 chars')
 
-        session = requests.Session()
-        request = requests.Request(
-            'DELETE',
-            'https://{}/user_api/v1/instances/{}/users/{}'.format(
-                self.endpoint,
-                self.instance_id,
-                user_id,
-            ),
-            headers={
-                'host': self.endpoint,
-                'authorization': 'Bearer {}'.format(self.secret_key),
-                'x-pusher-library': 'pusher-push-notifications-python {}'.format(
-                    SDK_VERSION,
-                )
+        self._make_request(
+            method='DELETE',
+            path='/user_api/v1/instances/{instance_id}/users/{user_id}',
+            path_params={
+                'instance_id': self.instance_id,
+                'user_id': user_id,
             },
         )
-        session.send(request.prepare())
