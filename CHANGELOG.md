@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.0.2] - 2019-01-04
+### Fixed
+ - Relaxed version requirements of dependencies to increase compatibility
+
 ## [1.0.1] - 2018-11-19
 ### Fixed
  - Updated requests version to include fix for CVE-2018-18074
