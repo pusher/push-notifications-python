@@ -474,3 +474,97 @@ class TestPushNotificationsUsers(unittest.TestCase):
         with self.assertRaises(ValueError) as e:
             pn_client.delete_user('A'*165)
         self.assertIn('longer than the maximum of 164 chars', str(e.exception))
+
+    def test_delete_user_should_raise_on_http_4xx_error(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=400,
+                json={'error': 'Invalid request', 'description': 'blah'},
+            )
+            with self.assertRaises(PusherValidationError) as e:
+                pn_client.delete_user('user-0001')
+            self.assertIn('Invalid request: blah', str(e.exception))
+
+    def test_delete_user_should_raise_on_http_5xx_error(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=500,
+                json={'error': 'Server error', 'description': 'blah'},
+            )
+            with self.assertRaises(PusherServerError) as e:
+                pn_client.delete_user('user-0001')
+            self.assertIn('Server error: blah', str(e.exception))
+
+    def test_delete_user_should_raise_on_http_401_error(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=401,
+                json={'error': 'Auth error', 'description': 'blah'},
+            )
+            with self.assertRaises(PusherAuthError) as e:
+                pn_client.delete_user('user-0001')
+            self.assertIn('Auth error: blah', str(e.exception))
+
+    def test_publish_to_users_should_raise_on_http_404_error(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=404,
+                json={'error': 'Instance not found', 'description': 'blah'},
+            )
+            with self.assertRaises(PusherMissingInstanceError) as e:
+                pn_client.delete_user('user-0001')
+            self.assertIn('Instance not found: blah', str(e.exception))
+
+    def test_delete_user_should_error_correctly_if_error_not_json(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=500,
+                text='<notjson></notjson>',
+            )
+            with self.assertRaises(PusherServerError) as e:
+                pn_client.delete_user('user-0001')
+            self.assertIn('Unknown error: no description', str(e.exception))
+
+    def test_delete_user_should_not_error_on_not_json_success(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY'
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=200,
+                text='<notjson></notjson>',
+            )
+            pn_client.delete_user('alice')

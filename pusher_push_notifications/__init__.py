@@ -142,9 +142,7 @@ class PushNotifications(object):
         try:
             response_body = response.json()
         except ValueError:
-            raise PusherBadResponseError(
-                'The server returned a malformed response',
-            )
+            response_body = None
 
         return response_body
 
@@ -262,6 +260,11 @@ class PushNotifications(object):
             body=publish_body,
         )
 
+        if response_body is None:
+            raise PusherBadResponseError(
+                'The server returned a malformed response',
+            )
+
         return response_body
 
     def publish_to_users(self, user_ids, publish_body):
@@ -330,6 +333,11 @@ class PushNotifications(object):
             },
             body=publish_body,
         )
+
+        if response_body is None:
+            raise PusherBadResponseError(
+                'The server returned a malformed response',
+            )
 
         return response_body
 
