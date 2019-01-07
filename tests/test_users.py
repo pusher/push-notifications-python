@@ -109,7 +109,7 @@ class TestPushNotificationsUsers(unittest.TestCase):
                 'content-type': 'application/json',
                 'content-length': '64',
                 'authorization': 'Bearer SECRET_KEY',
-                'x-pusher-library': 'pusher-push-notifications-python 1.0.1',
+                'x-pusher-library': 'pusher-push-notifications-python 1.0.2',
                 'host': 'instance_id.pushnotifications.pusher.com',
             },
         )
@@ -452,7 +452,7 @@ class TestPushNotificationsUsers(unittest.TestCase):
             {
                 'content-length': '0',
                 'authorization': 'Bearer SECRET_KEY',
-                'x-pusher-library': 'pusher-push-notifications-python 1.0.1',
+                'x-pusher-library': 'pusher-push-notifications-python 1.0.2',
                 'host': 'instance_id.pushnotifications.pusher.com',
             },
         )
