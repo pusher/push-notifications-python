@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [1.0.3] - 2019-01-16
+### Fixed
+ - Updated python runtime version requirements in setup.py to reflect the versions
+   we actually support.
+
 ## [1.0.2] - 2019-01-04
 ### Fixed
  - Relaxed version requirements of dependencies to increase compatibility

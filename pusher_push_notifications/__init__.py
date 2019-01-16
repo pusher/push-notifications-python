@@ -6,7 +6,7 @@ import re
 import requests
 import six
 
-SDK_VERSION = '1.0.2'
+SDK_VERSION = '1.0.3'
 INTEREST_MAX_LENGTH = 164
 INTEREST_REGEX = re.compile('^(_|-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$')
 MAX_NUMBER_OF_INTERESTS = 100
