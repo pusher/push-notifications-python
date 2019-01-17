@@ -445,7 +445,7 @@ class TestPushNotificationsUsers(unittest.TestCase):
         )
         self.assertEqual(
             path,
-            '/user_api/v1/instances/instance_id/users/alice',
+            '/customer_api/v1/instances/instance_id/users/alice',
         )
         self.assertDictEqual(
             headers,
