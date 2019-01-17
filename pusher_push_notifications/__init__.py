@@ -400,7 +400,7 @@ class PushNotifications(object):
 
         self._make_request(
             method='DELETE',
-            path='/user_api/v1/instances/{instance_id}/users/{user_id}',
+            path='/customer_api/v1/instances/{instance_id}/users/{user_id}',
             path_params={
                 'instance_id': self.instance_id,
                 'user_id': user_id,
