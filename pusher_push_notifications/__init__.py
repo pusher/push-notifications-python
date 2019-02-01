@@ -341,7 +341,7 @@ class PushNotifications(object):
 
         return response_body
 
-    def authenticate_user(self, user_id):
+    def generate_token(self, user_id):
         """Generate an auth token which will allow devices to associate
         themselves with the given user id
 

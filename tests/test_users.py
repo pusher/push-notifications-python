@@ -18,14 +18,14 @@ from pusher_push_notifications import (
 
 
 class TestPushNotificationsUsers(unittest.TestCase):
-    def test_authenticate_user_should_return_token(self):
+    def test_generate_token_should_return_token(self):
         user_id = 'user-0001'
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
         )
 
-        token_string = pn_client.authenticate_user(user_id)
+        token_string = pn_client.generate_token(user_id)
 
         self.assertIsInstance(token_string, six.string_types)
         self.assertTrue(len(token_string) > 0)
@@ -44,24 +44,24 @@ class TestPushNotificationsUsers(unittest.TestCase):
         self.assertIsNotNone(decoded_token.get('exp'))
         self.assertTrue(decoded_token.get('exp') > time.time())
 
-    def test_authenticate_user_should_fail_if_user_id_not_a_string(self):
+    def test_generate_token_should_fail_if_user_id_not_a_string(self):
         user_id = False
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
         )
         with self.assertRaises(TypeError) as e:
-            pn_client.authenticate_user(user_id)
+            pn_client.generate_token(user_id)
         self.assertIn('user_id must be a string', str(e.exception))
 
-    def test_authenticate_user_should_fail_if_user_id_too_long(self):
+    def test_generate_token_should_fail_if_user_id_too_long(self):
         user_id = 'A' * 165
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
         )
         with self.assertRaises(ValueError) as e:
-            pn_client.authenticate_user(user_id)
+            pn_client.generate_token(user_id)
         self.assertIn('longer than the maximum of 164 chars', str(e.exception))
 
     def test_publish_to_users_should_make_correct_http_request(self):
