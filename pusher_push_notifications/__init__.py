@@ -349,7 +349,7 @@ class PushNotifications(object):
             user_id (string): user id for which the token will be valid
 
         Returns:
-            auth token for the requested user id (string)
+            Beams token wrapped in dictionary for json serialization (dict)
 
         Raises:
             TypeError: if user_id is not a string
@@ -367,7 +367,7 @@ class PushNotifications(object):
         expiry_datetime = now + AUTH_TOKEN_DURATION
         expiry_timestamp = int(time.mktime(expiry_datetime.timetuple()))
 
-        return jwt.encode(
+        token = jwt.encode(
             {
                 'iss': issuer,
                 'sub': user_id,
@@ -376,6 +376,10 @@ class PushNotifications(object):
             self.secret_key,
             algorithm='HS256',
         ).decode('utf-8')
+
+        return {
+            'token': token,
+        }
 
     def delete_user(self, user_id):
         """Remove the user with the given ID (and all of their devices) from

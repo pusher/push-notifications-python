@@ -25,9 +25,12 @@ class TestPushNotificationsUsers(unittest.TestCase):
             'SECRET_KEY'
         )
 
-        token_string = pn_client.generate_token(user_id)
+        token_object = pn_client.generate_token(user_id)
+        self.assertIsInstance(token_object, dict)
 
+        token_string = token_object.get('token')
         self.assertIsInstance(token_string, six.string_types)
+
         self.assertTrue(len(token_string) > 0)
 
         decoded_token = jwt.decode(
