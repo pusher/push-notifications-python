@@ -526,7 +526,7 @@ class TestPushNotificationsUsers(unittest.TestCase):
                 pn_client.delete_user('user-0001')
             self.assertIn('Auth error: blah', str(e.exception))
 
-    def test_publish_to_users_should_raise_on_http_404_error(self):
+    def test_delete_user_should_raise_on_http_404_error(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
             'SECRET_KEY'
