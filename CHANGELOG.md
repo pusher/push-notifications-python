@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
- - Support for "Users" feature: `publish_to_users`, `authenticate_user` and `delete_user`
+ - Support for "Authenticated Users" feature: `publish_to_users`, `generate_token` and `delete_user`
 
 ### Changed
  - `publish` renamed to `publish_to_interests` (`publish` method deprecated).

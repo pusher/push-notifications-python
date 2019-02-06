@@ -40,7 +40,7 @@ Use your instance id and secret (you can get these from the
 Publishing to Device Interests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can broadcast notifications to groups of subscribed devices using `Device Interests <https://docs.pusher.com/beams/interests>`__:
+You can broadcast notifications to groups of subscribed devices using `Device Interests <https://docs.pusher.com/beams/concepts/device-interests>`__:
 
 .. code::
 
@@ -66,7 +66,7 @@ You can broadcast notifications to groups of subscribed devices using `Device In
 Publishing to Authenticated Users
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Securely send notifications to individual users of your application using `Authenticated Users <https://docs.pusher.com/beams/users>`__:
+Securely send notifications to individual users of your application using `Authenticated Users <https://docs.pusher.com/beams/concepts/authenticated-users>`__:
 
 .. code::
 
