@@ -1,5 +1,7 @@
 .. image:: https://travis-ci.org/pusher/push-notifications-python.svg?branch=master
    :target: https://travis-ci.org/pusher/push-notifications-python
+.. image:: https://codecov.io/gh/pusher/push-notifications-python/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/pusher/push-notifications-python
 
 Pusher Beams Python server SDK
 ==============================
@@ -35,16 +37,54 @@ Use your instance id and secret (you can get these from the
       secret_key='YOUR_SECRET_KEY_HERE',
   )
 
-Publishing a Notification
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Publishing to Device Interests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once you have created your Beams PushNotifications instance you can publish a push notification to your registered & subscribed devices:
+You can broadcast notifications to groups of subscribed devices using `Device Interests <https://docs.pusher.com/beams/concepts/device-interests>`__:
 
 .. code::
 
-  response = pn_client.publish(
+  response = pn_client.publish_to_interests(
       interests=['hello'],
-      publish_body={'apns': {'aps': {'alert': 'Hello!'}}, 'fcm': {'notification': {'title': 'Hello', 'body': 'Hello, World!'}}}
+      publish_body={
+          'apns': {
+              'aps': {
+                  'alert': 'Hello!'
+              }
+          },
+          'fcm': {
+              'notification': {
+                  'title': 'Hello',
+                  'body': 'Hello, World!'
+              }
+          }
+      }
+  )
+
+  print(response['publishId'])
+
+Publishing to Authenticated Users
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Securely send notifications to individual users of your application using `Authenticated Users <https://docs.pusher.com/beams/concepts/authenticated-users>`__:
+
+.. code::
+
+  response = pn_client.publish_to_users(
+      user_ids=['user-0001'],
+      publish_body={
+          'apns': {
+              'aps': {
+                  'alert': 'Hello!'
+              }
+          },
+          'fcm': {
+              'notification': {
+                  'title': 'Hello',
+                  'body': 'Hello, World!'
+              }
+          }
+      }
   )
 
   print(response['publishId'])
