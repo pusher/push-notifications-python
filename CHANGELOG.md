@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [1.1.0]
+## [1.1.0] - 2019-02-06
 ### Added
  - Support for "Authenticated Users" feature: `publish_to_users`, `generate_token` and `delete_user`
 
