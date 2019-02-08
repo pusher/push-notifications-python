@@ -32,7 +32,7 @@ Use your instance id and secret (you can get these from the
 
   from pusher_push_notifications import PushNotifications
 
-  pn_client = PushNotifications(
+  beams_client = PushNotifications(
       instance_id='YOUR_INSTANCE_ID_HERE',
       secret_key='YOUR_SECRET_KEY_HERE',
   )
@@ -44,7 +44,7 @@ You can broadcast notifications to groups of subscribed devices using `Device In
 
 .. code::
 
-  response = pn_client.publish_to_interests(
+  response = beams_client.publish_to_interests(
       interests=['hello'],
       publish_body={
           'apns': {
@@ -70,7 +70,7 @@ Securely send notifications to individual users of your application using `Authe
 
 .. code::
 
-  response = pn_client.publish_to_users(
+  response = beams_client.publish_to_users(
       user_ids=['user-0001'],
       publish_body={
           'apns': {
