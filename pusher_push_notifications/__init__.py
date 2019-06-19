@@ -57,11 +57,11 @@ def _handle_http_error(response_body, status_code):
     )
     if status_code == 401:
         raise PusherAuthError(error_string)
-    elif status_code == 404:
+    if status_code == 404:
         raise PusherMissingInstanceError(error_string)
-    elif 400 <= status_code < 500:
+    if 400 <= status_code < 500:
         raise PusherValidationError(error_string)
-    elif 500 <= status_code < 600:
+    if 500 <= status_code < 600:
         raise PusherServerError(error_string)
 
 
