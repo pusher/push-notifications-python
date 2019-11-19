@@ -3,6 +3,7 @@
 import copy
 import datetime
 import json
+import os
 import re
 import time
 import warnings
@@ -76,12 +77,20 @@ def _make_url(scheme, host, path):
     ])
 
 
+def _get_proxies_from_env():
+    return {
+        'http': os.environ.get('HTTP_PROXY') or os.environ.get('http_proxy'),
+        'https': os.environ.get('HTTPS_PROXY') or os.environ.get('https_proxy'),
+    }
+
+
 class PushNotifications(object):
     """Pusher Push Notifications API client
     This client class can be used to publish notifications to the Pusher
     Push Notifications service"""
 
-    def __init__(self, instance_id, secret_key, endpoint=None):
+    def __init__(self, instance_id, secret_key,
+                 endpoint=None, use_proxy_env_vars=False):
         if not isinstance(instance_id, six.string_types):
             raise TypeError('instance_id must be a string')
         if instance_id == '':
@@ -99,6 +108,7 @@ class PushNotifications(object):
         self.instance_id = instance_id
         self.secret_key = secret_key
         self._endpoint = endpoint
+        self._use_proxy_env_vars = use_proxy_env_vars
 
     @property
     def endpoint(self):
@@ -117,6 +127,9 @@ class PushNotifications(object):
         url = _make_url(scheme='https', host=self.endpoint, path=path)
 
         session = requests.Session()
+        if self._use_proxy_env_vars:
+            session.proxies = _get_proxies_from_env()
+
         request = requests.Request(
             method,
             url,
