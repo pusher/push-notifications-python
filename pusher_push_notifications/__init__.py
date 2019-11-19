@@ -127,6 +127,11 @@ class PushNotifications(object):
         url = _make_url(scheme='https', host=self.endpoint, path=path)
 
         session = requests.Session()
+        # We've had multiple support requests about this library not working
+        # on PythonAnywhere (a popular python deployment platform)
+        # They require that proxy servers be loaded from the environment when
+        # making requests (on their free plan).
+        # This flag enables this behaviour.
         if self._use_proxy_env_vars:
             session.proxies = _get_proxies_from_env()
 
