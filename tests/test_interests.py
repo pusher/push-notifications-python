@@ -83,6 +83,74 @@ class TestPushNotificationsInterests(unittest.TestCase):
             },
         )
 
+    def test_enabling_proxies_should_not_fail(self):
+        pn_client = PushNotifications(
+            'INSTANCE_ID',
+            'SECRET_KEY',
+            use_proxy_env_vars=True,
+        )
+        with requests_mock.Mocker() as http_mock:
+            http_mock.register_uri(
+                requests_mock.ANY,
+                requests_mock.ANY,
+                status_code=200,
+                json={
+                    'publishId': '1234',
+                },
+            )
+            response = pn_client.publish_to_interests(
+                interests=['donuts'],
+                publish_body={
+                    'apns': {
+                        'aps': {
+                            'alert': 'Hello World!',
+                        },
+                    },
+                },
+            )
+            req = http_mock.request_history[0]
+
+        method = req.method
+        path = req.path
+        headers = dict(req._request.headers.lower_items())
+        body = req.json()
+
+        self.assertEqual(
+            method,
+            'POST',
+        )
+        self.assertEqual(
+            path,
+            '/publish_api/v1/instances/instance_id/publishes/interests',
+        )
+        self.assertDictEqual(
+            headers,
+            {
+                'content-type': 'application/json',
+                'content-length': '69',
+                'authorization': 'Bearer SECRET_KEY',
+                'x-pusher-library': 'pusher-push-notifications-python 1.1.0',
+                'host': 'instance_id.pushnotifications.pusher.com',
+            },
+        )
+        self.assertDictEqual(
+            body,
+            {
+                'interests': ['donuts'],
+                'apns': {
+                    'aps': {
+                        'alert': 'Hello World!',
+                    },
+                },
+            },
+        )
+        self.assertDictEqual(
+            response,
+            {
+                'publishId': '1234',
+            },
+        )
+
     def test_deprecated_alias_still_works(self):
         pn_client = PushNotifications(
             'INSTANCE_ID',
