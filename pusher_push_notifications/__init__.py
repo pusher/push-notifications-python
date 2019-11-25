@@ -89,8 +89,7 @@ class PushNotifications(object):
     This client class can be used to publish notifications to the Pusher
     Push Notifications service"""
 
-    def __init__(self, instance_id, secret_key,
-                 endpoint=None, use_proxy_env_vars=False):
+    def __init__(self, instance_id, secret_key, endpoint=None):
         if not isinstance(instance_id, six.string_types):
             raise TypeError('instance_id must be a string')
         if instance_id == '':
@@ -108,7 +107,6 @@ class PushNotifications(object):
         self.instance_id = instance_id
         self.secret_key = secret_key
         self._endpoint = endpoint
-        self._use_proxy_env_vars = use_proxy_env_vars
 
     @property
     def endpoint(self):
@@ -131,9 +129,9 @@ class PushNotifications(object):
         # on PythonAnywhere (a popular python deployment platform)
         # They require that proxy servers be loaded from the environment when
         # making requests (on their free plan).
-        # This flag enables this behaviour.
-        if self._use_proxy_env_vars:
-            session.proxies = _get_proxies_from_env()
+        # This reintroduces the proxy support that is the default in requests
+        # anyway.
+        session.proxies = _get_proxies_from_env()
 
         request = requests.Request(
             method,
