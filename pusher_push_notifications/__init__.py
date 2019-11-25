@@ -3,6 +3,7 @@
 import copy
 import datetime
 import json
+import os
 import re
 import time
 import warnings
@@ -76,6 +77,13 @@ def _make_url(scheme, host, path):
     ])
 
 
+def _get_proxies_from_env():
+    return {
+        'http': os.environ.get('HTTP_PROXY') or os.environ.get('http_proxy'),
+        'https': os.environ.get('HTTPS_PROXY') or os.environ.get('https_proxy'),
+    }
+
+
 class PushNotifications(object):
     """Pusher Push Notifications API client
     This client class can be used to publish notifications to the Pusher
@@ -117,6 +125,14 @@ class PushNotifications(object):
         url = _make_url(scheme='https', host=self.endpoint, path=path)
 
         session = requests.Session()
+        # We've had multiple support requests about this library not working
+        # on PythonAnywhere (a popular python deployment platform)
+        # They require that proxy servers be loaded from the environment when
+        # making requests (on their free plan).
+        # This reintroduces the proxy support that is the default in requests
+        # anyway.
+        session.proxies = _get_proxies_from_env()
+
         request = requests.Request(
             method,
             url,
