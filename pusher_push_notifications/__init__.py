@@ -391,7 +391,8 @@ class PushNotifications(object):
             },
             self.secret_key,
             algorithm='HS256',
-        ).decode('utf-8')
+        )
+        token = six.ensure_text(token)
 
         return {
             'token': token,
