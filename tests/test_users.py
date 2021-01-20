@@ -36,7 +36,7 @@ class TestPushNotificationsUsers(unittest.TestCase):
         decoded_token = jwt.decode(
             token_string,
             'SECRET_KEY',
-            algorithm='HS256',
+            algorithms='HS256',
         )
 
         expected_issuer = 'https://INSTANCE_ID.pushnotifications.pusher.com'
