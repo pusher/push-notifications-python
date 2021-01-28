@@ -29,4 +29,6 @@ jobs:
       - name: Lint Docs
         run: python setup.py checkdocs
       - name: Test
-        run: python -m nose -s --with-coverage && codecov
+        run: python -m nose -s --with-coverage
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
