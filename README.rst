@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/pusher/push-notifications-python.svg?branch=master
-   :target: https://travis-ci.org/pusher/push-notifications-python
+.. image:: https://github.com/pusher/push-notifications-python/workflows/CI/badge.svg
+   :target: https://github.com/pusher/push-notifications-python/actions?query=branch%3Amaster
 .. image:: https://codecov.io/gh/pusher/push-notifications-python/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/pusher/push-notifications-python
 
