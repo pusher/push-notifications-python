@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.0.1] - 2020-02-02
+### Fixed
+ - Updated requirements.txt to reflect compatibility with pyjwt 2
+
 ## [2.0.0] - 2019-11-25
 ### Added
  - Support for `HTTP_PROXY` environment variables. This should enable use of the
