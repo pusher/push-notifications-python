@@ -170,12 +170,12 @@ class PushNotifications(object):
                 be sent to.
             publish_body (dict): Dict containing the body of the push
                 notification publish request.
-                (see https://docs.pusher.com/push-notifications)
+                (see https://pusher.com/docs/beams/)
 
         Returns:
             A dict containing the publish response from the Pusher Push
             Notifications service.
-            (see https://docs.pusher.com/push-notifications)
+            (see https://pusher.com/docs/beams/)
 
         Raises:
             PusherAuthError: if the secret_key is incorrect
@@ -208,12 +208,12 @@ class PushNotifications(object):
                 be sent to.
             publish_body (dict): Dict containing the body of the push
                 notification publish request.
-                (see https://docs.pusher.com/push-notifications)
+                (see https://pusher.com/docs/beams/)
 
         Returns:
             A dict containing the publish response from the Pusher Push
             Notifications service.
-            (see https://docs.pusher.com/push-notifications)
+            (see https://pusher.com/docs/beams/)
 
         Raises:
             PusherAuthError: if the secret_key is incorrect
@@ -291,12 +291,12 @@ class PushNotifications(object):
                 be sent to.
             publish_body (dict): Dict containing the body of the push
                 notification publish request.
-                (see https://docs.pusher.com/push-notifications)
+                (see https://pusher.com/docs/beams/)
 
         Returns:
             A dict containing the publish response from the Pusher Push
             Notifications service.
-            (see https://docs.pusher.com/push-notifications)
+            (see https://pusher.com/docs/beams/)
 
         Raises:
             PusherAuthError: if the secret_key is incorrect
