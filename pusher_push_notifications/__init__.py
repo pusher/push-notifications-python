@@ -108,6 +108,17 @@ class PushNotifications(object):
         self.secret_key = secret_key
         self._endpoint = endpoint
 
+        session = requests.Session()
+        # We've had multiple support requests about this library not working
+        # on PythonAnywhere (a popular python deployment platform)
+        # They require that proxy servers be loaded from the environment when
+        # making requests (on their free plan).
+        # This reintroduces the proxy support that is the default in requests
+        # anyway.
+        session.proxies = _get_proxies_from_env()
+        self.session = session
+
+
     @property
     def endpoint(self):
         """Property method to calculate the correct Pusher API host"""
@@ -124,15 +135,6 @@ class PushNotifications(object):
         path = path.format(**path_params)
         url = _make_url(scheme='https', host=self.endpoint, path=path)
 
-        session = requests.Session()
-        # We've had multiple support requests about this library not working
-        # on PythonAnywhere (a popular python deployment platform)
-        # They require that proxy servers be loaded from the environment when
-        # making requests (on their free plan).
-        # This reintroduces the proxy support that is the default in requests
-        # anyway.
-        session.proxies = _get_proxies_from_env()
-
         request = requests.Request(
             method,
             url,
@@ -146,7 +148,7 @@ class PushNotifications(object):
             },
         )
 
-        response = session.send(request.prepare())
+        response = self.session.send(request.prepare())
 
         if response.status_code != 200:
             try:
