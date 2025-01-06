@@ -13,7 +13,7 @@ import requests
 import six
 from six.moves import urllib
 
-SDK_VERSION = '2.0.1'
+SDK_VERSION = '2.0.2'
 
 INTEREST_MAX_LENGTH = 164
 INTEREST_REGEX = re.compile('^(_|-|=|@|,|\\.|;|[A-Z]|[a-z]|[0-9])*$')
